@@ -28,7 +28,7 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 	defer writer.Flush()
 
 	// Write the header row
-	writer.Write([]string{"Generation", "TotalFitness"})
+	writer.Write([]string{fmt.Sprintf("Total Fitness (Memory Length: %d)", memoryLength)})
 
 	// Evolve over generations
 	for gen := 0; gen < generations; gen++ {
@@ -46,7 +46,7 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 		}
 
 		// Write the total fitness for this generation to the CSV file
-		writer.Write([]string{fmt.Sprintf("%d", gen+1), fmt.Sprintf("%d", totalFitness)})
+		writer.Write([]string{fmt.Sprintf("%d", totalFitness)})
 
 		// Sort population by fitness (descending)
 		sort.Slice(population, func(i, j int) bool {
