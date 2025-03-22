@@ -8,7 +8,7 @@ import (
 	"sort"
 )
 
-func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mutationRate float64, fixedStrategies []map[string]string, memoryLength int, csvFileName string) {
+func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mutationRate float64, fixedStrategies []map[string]float64, memoryLength int, csvFileName string) {
 	// Initialize population
 	population := make([]Agent, populationSize)
 	for i := 0; i < populationSize; i++ {
@@ -80,7 +80,8 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 		population = newPopulation
 
 		// Log the best fitness, strategy, and diversity
-		logger.Debug("Generation completed", "generation", gen+1, "bestFitness", population[0].Fitness, "diversity", diversity, "memoryLength", population[0].MemoryLength)
+		logger.Info("Generation completed", "generation", gen+1, "bestFitness", population[0].Fitness, "diversity", diversity, "memoryLength", population[0].MemoryLength,
+			"bestStrategy", population[0].Strategy)
 
 		// Reset fitness scores
 		for i := range population {
@@ -101,7 +102,7 @@ func calculateDiversity(population []Agent) int {
 
 // Perform crossover between two agents
 func crossover(parent1, parent2 Agent) Agent {
-	childStrategy := map[string]string{}
+	childStrategy := map[string]float64{}
 	for key := range parent1.Strategy {
 		if rand.Float64() < 0.5 {
 			childStrategy[key] = parent1.Strategy[key]
@@ -116,7 +117,13 @@ func crossover(parent1, parent2 Agent) Agent {
 func mutate(agent Agent, mutationRate float64) Agent {
 	for key := range agent.Strategy {
 		if rand.Float64() < mutationRate {
-			agent.Strategy[key] = randomMove()
+			// Adjust the probability slightly, ensuring it stays within [0.0, 1.0]
+			agent.Strategy[key] += (rand.Float64() - 0.5) * 0.1
+			if agent.Strategy[key] < 0.0 {
+				agent.Strategy[key] = 0.0
+			} else if agent.Strategy[key] > 1.0 {
+				agent.Strategy[key] = 1.0
+			}
 		}
 	}
 	return agent

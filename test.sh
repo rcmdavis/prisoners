@@ -5,8 +5,8 @@ set -e
 
 # Define the range of memory lengths
 START_MEMORY=1
-END_MEMORY=30
-STEP=5
+END_MEMORY=15
+STEP=1
 
 # Define other parameters
 OPPONENT="majorityRule"

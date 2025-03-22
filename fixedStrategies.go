@@ -34,29 +34,42 @@ func generateCombinationsForLength(length int) []string {
 	return combinations
 }
 
-// Generate a strategy map for a given memory length and default move
-func generateStrategy(memoryLength int, defaultMove string) map[string]string {
+// Generate the Always Cooperate strategy
+func generateAlwaysCooperate(memoryLength int) map[string]float64 {
 	combinations := generateCombinations(memoryLength)
-	strategy := make(map[string]string)
+	strategy := make(map[string]float64)
 
 	for _, combo := range combinations {
-		strategy[combo] = defaultMove
+		strategy[combo] = 1.0 // Always cooperate
+	}
+
+	return strategy
+}
+
+// Generate the Always Defect strategy
+func generateAlwaysDefect(memoryLength int) map[string]float64 {
+	combinations := generateCombinations(memoryLength)
+	strategy := make(map[string]float64)
+
+	for _, combo := range combinations {
+		strategy[combo] = 0.0 // Always defect
 	}
 
 	return strategy
 }
 
 // Generate the Tit for Tat strategy
-func generateTitForTat(memoryLength int) map[string]string {
+func generateTitForTat(memoryLength int) map[string]float64 {
 	combinations := generateCombinations(memoryLength)
-	strategy := make(map[string]string)
+	strategy := make(map[string]float64)
 
 	for _, combo := range combinations {
-		// Tit for Tat mimics the opponent's last move
 		if combo == "" {
-			strategy[combo] = "C" // Default to cooperate for the first move
+			strategy[combo] = 1.0 // Always cooperate on the first move
+		} else if combo[len(combo)-1] == 'C' {
+			strategy[combo] = 0.9 // High probability to cooperate if the opponent cooperated
 		} else {
-			strategy[combo] = string(combo[len(combo)-1]) // Use the last move in the memory
+			strategy[combo] = 0.1 // Low probability to cooperate if the opponent defected
 		}
 	}
 
@@ -64,14 +77,13 @@ func generateTitForTat(memoryLength int) map[string]string {
 }
 
 // Generate the Majority Rule strategy
-func generateMajorityRule(memoryLength int) map[string]string {
+func generateMajorityRule(memoryLength int) map[string]float64 {
 	combinations := generateCombinations(memoryLength)
-	strategy := make(map[string]string)
+	strategy := make(map[string]float64)
 
 	for _, combo := range combinations {
 		if combo == "" {
-			// Default to cooperate for the first move
-			strategy[combo] = "C"
+			strategy[combo] = 1.0 // Always cooperate on the first move
 		} else {
 			// Count occurrences of C and D in the opponent's history
 			countC := 0
@@ -86,11 +98,11 @@ func generateMajorityRule(memoryLength int) map[string]string {
 
 			// Decide based on the majority
 			if countC > countD {
-				strategy[combo] = "C" // Cooperate if C is the majority
+				strategy[combo] = 0.9 // High probability to cooperate if C is the majority
 			} else if countD > countC {
-				strategy[combo] = "D" // Defect if D is the majority
+				strategy[combo] = 0.1 // Low probability to cooperate if D is the majority
 			} else {
-				strategy[combo] = "C" // Default to cooperate in case of a tie
+				strategy[combo] = 0.5 // Moderate probability to cooperate in case of a tie
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"math/rand"
 	"os"
 )
 
@@ -20,10 +21,12 @@ func main() {
 	opponentFlag := flag.String("opponent", "alwaysDefect", "Fixed opponent strategy: alwaysCooperate, alwaysDefect, titForTat, majorityRule, or allFour")
 	csvFile := flag.String("csvFile", "fitness_per_generation.csv", "Name of the CSV file to store fitness data")
 	logLevel := flag.String("logLevel", "WARN", "Log level: DEBUG, INFO, WARN, or ERROR")
+	seed := flag.Int64("seed", 42, "Seed for the random number generator")
 
 	// Parse the flags
 	flag.Parse()
 
+	rand.Seed(*seed)
 	// Configure the logger based on the log level
 	var level slog.Level
 	switch *logLevel {
@@ -46,18 +49,18 @@ func main() {
 	logger.Info("Starting the genetic algorithm", "memoryLength", *memoryLength, "populationSize", *populationSize, "generations", *generations)
 
 	// Create strategies based on the memory length
-	alwaysCooperate := generateStrategy(*memoryLength, "C")
-	alwaysDefect := generateStrategy(*memoryLength, "D")
+	alwaysCooperate := generateAlwaysCooperate(*memoryLength)
+	alwaysDefect := generateAlwaysDefect(*memoryLength)
 	titForTat := generateTitForTat(*memoryLength)
 	majorityRule := generateMajorityRule(*memoryLength)
 
 	// Define the fixed strategies
 	strategies := map[string]interface{}{
-		"alwaysCooperate": []map[string]string{alwaysCooperate},
-		"alwaysDefect":    []map[string]string{alwaysDefect},
-		"titForTat":       []map[string]string{titForTat},
-		"majorityRule":    []map[string]string{majorityRule},
-		"allFour":         []map[string]string{alwaysCooperate, alwaysDefect, titForTat, majorityRule},
+		"alwaysCooperate": []map[string]float64{alwaysCooperate},
+		"alwaysDefect":    []map[string]float64{alwaysDefect},
+		"titForTat":       []map[string]float64{titForTat},
+		"majorityRule":    []map[string]float64{majorityRule},
+		"allFour":         []map[string]float64{alwaysCooperate, alwaysDefect, titForTat, majorityRule},
 	}
 
 	// Get the selected strategy or list of strategies
@@ -69,5 +72,5 @@ func main() {
 	}
 
 	// Run the genetic algorithm
-	geneticAlgorithm(*populationSize, *generations, *rounds, *crossoverRate, *mutationRate, fixedStrategies.([]map[string]string), *memoryLength, *csvFile)
+	geneticAlgorithm(*populationSize, *generations, *rounds, *crossoverRate, *mutationRate, fixedStrategies.([]map[string]float64), *memoryLength, *csvFile)
 }

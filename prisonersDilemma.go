@@ -1,7 +1,9 @@
 package main
 
+import "math/rand"
+
 // Play Iterated Prisoner's Dilemma and calculate payoff
-func playIPD(agentStrategy, opponentStrategy map[string]string, rounds int) int {
+func playIPD(agentStrategy, opponentStrategy map[string]float64, rounds int) int {
 	agentHistory := []string{}
 	opponentHistory := []string{}
 	agentScore := 0
@@ -20,15 +22,26 @@ func playIPD(agentStrategy, opponentStrategy map[string]string, rounds int) int 
 }
 
 // Function to get the next move based on the strategy and opponent's history
-func getNextMove(strategy map[string]string, opponentHistory []string) string {
+func getNextMove(strategy map[string]float64, opponentHistory []string) string {
 	if len(opponentHistory) == 0 {
-		return strategy[""] // Use the first move defined in the strategy
+		// Use the probability for the initial state
+		if rand.Float64() < strategy[""] {
+			return "C"
+		}
+		return "D"
 	}
 	lastMove := opponentHistory[len(opponentHistory)-1]
-	if move, exists := strategy[lastMove]; exists {
-		return move
+	if prob, exists := strategy[lastMove]; exists {
+		if rand.Float64() < prob {
+			return "C"
+		}
+		return "D"
 	}
-	return strategy[""] // Default to the first move if no match is found
+	// Default to the initial state's probability if no match is found
+	if rand.Float64() < strategy[""] {
+		return "C"
+	}
+	return "D"
 }
 
 // Calculate payoff for a single round
