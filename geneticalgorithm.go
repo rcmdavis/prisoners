@@ -18,7 +18,7 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 	// Create a CSV file to store total fitness per generation
 	csvFile, err := os.Create(csvFileName)
 	if err != nil {
-		fmt.Println("Error creating CSV file:", err)
+		logger.Error("Error creating CSV file", "error", err)
 		return
 	}
 	defer csvFile.Close()
@@ -76,8 +76,8 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 		// Replace old population with new population
 		population = newPopulation
 
-		// Print the best fitness and strategy
-		fmt.Printf("Generation %d: Best Fitness = %d, Best Strategy = %v, Memory Length = %d\n", gen+1, population[0].Fitness, population[0].Strategy, population[0].MemoryLength)
+		// Log the best fitness and strategy
+		logger.Debug("Generation completed", "generation", gen+1, "bestFitness", population[0].Fitness, "bestStrategy", population[0].Strategy, "memoryLength", population[0].MemoryLength)
 
 		// Reset fitness scores
 		for i := range population {
