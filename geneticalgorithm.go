@@ -8,7 +8,7 @@ import (
 	"sort"
 )
 
-func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mutationRate float64, fixedStrategies []map[string]string, memoryLength int) {
+func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mutationRate float64, fixedStrategies []map[string]string, memoryLength int, csvFileName string) {
 	// Initialize population
 	population := make([]Agent, populationSize)
 	for i := 0; i < populationSize; i++ {
@@ -16,7 +16,7 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 	}
 
 	// Create a CSV file to store total fitness per generation
-	csvFile, err := os.Create("fitness_per_generation.csv")
+	csvFile, err := os.Create(csvFileName)
 	if err != nil {
 		fmt.Println("Error creating CSV file:", err)
 		return

@@ -15,6 +15,7 @@ func main() {
 	crossoverRate := flag.Float64("crossoverRate", 0.8, "Crossover rate (0.0 to 1.0)")
 	mutationRate := flag.Float64("mutationRate", 0.01, "Mutation rate (0.0 to 1.0)")
 	opponentFlag := flag.String("opponent", "alwaysDefect", "Fixed opponent strategy: alwaysCooperate, alwaysDefect, titForTat, majorityRule, or allFour")
+	csvFile := flag.String("csvFile", "fitness_per_generation.csv", "Name of the CSV file to store fitness data")
 
 	// Parse the flags
 	flag.Parse()
@@ -43,5 +44,5 @@ func main() {
 	}
 
 	// Run the genetic algorithm
-	geneticAlgorithm(*populationSize, *generations, *rounds, *crossoverRate, *mutationRate, fixedStrategies.([]map[string]string), *memoryLength)
+	geneticAlgorithm(*populationSize, *generations, *rounds, *crossoverRate, *mutationRate, fixedStrategies.([]map[string]string), *memoryLength, *csvFile)
 }
