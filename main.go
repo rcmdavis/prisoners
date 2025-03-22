@@ -14,7 +14,7 @@ func main() {
 	memoryLength := flag.Int("memory", 2, "Memory length for strategies")
 	populationSize := flag.Int("populationSize", 100, "Size of the population")
 	generations := flag.Int("generations", 50, "Number of generations")
-	rounds := flag.Int("rounds", 10, "Number of rounds per game")
+	rounds := flag.Int("rounds", 100, "Number of rounds per game")
 	crossoverRate := flag.Float64("crossoverRate", 0.8, "Crossover rate (0.0 to 1.0)")
 	mutationRate := flag.Float64("mutationRate", 0.01, "Mutation rate (0.0 to 1.0)")
 	opponentFlag := flag.String("opponent", "alwaysDefect", "Fixed opponent strategy: alwaysCooperate, alwaysDefect, titForTat, majorityRule, or allFour")

@@ -15,7 +15,7 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 		population[i] = initializeAgent(memoryLength)
 	}
 
-	// Create a CSV file to store total fitness per generation
+	// Create a CSV file to store total fitness and diversity per generation
 	csvFile, err := os.Create(csvFileName)
 	if err != nil {
 		logger.Error("Error creating CSV file", "error", err)
@@ -28,7 +28,7 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 	defer writer.Flush()
 
 	// Write the header row
-	writer.Write([]string{fmt.Sprintf("Total Fitness (Memory Length: %d)", memoryLength)})
+	writer.Write([]string{fmt.Sprintf("Total Fitness (Memory Length: %d)", memoryLength), "Diversity"})
 
 	// Evolve over generations
 	for gen := 0; gen < generations; gen++ {
@@ -45,8 +45,11 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 			totalFitness += population[i].Fitness
 		}
 
-		// Write the total fitness for this generation to the CSV file
-		writer.Write([]string{fmt.Sprintf("%d", totalFitness)})
+		// Calculate diversity
+		diversity := calculateDiversity(population)
+
+		// Write the total fitness and diversity for this generation to the CSV file
+		writer.Write([]string{fmt.Sprintf("%d", totalFitness), fmt.Sprintf("%d", diversity)})
 
 		// Sort population by fitness (descending)
 		sort.Slice(population, func(i, j int) bool {
@@ -76,14 +79,24 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 		// Replace old population with new population
 		population = newPopulation
 
-		// Log the best fitness and strategy
-		logger.Debug("Generation completed", "generation", gen+1, "bestFitness", population[0].Fitness, "bestStrategy", population[0].Strategy, "memoryLength", population[0].MemoryLength)
+		// Log the best fitness, strategy, and diversity
+		logger.Debug("Generation completed", "generation", gen+1, "bestFitness", population[0].Fitness, "diversity", diversity, "memoryLength", population[0].MemoryLength)
 
 		// Reset fitness scores
 		for i := range population {
 			population[i].Fitness = 0
 		}
 	}
+}
+
+// Calculate diversity in the population
+func calculateDiversity(population []Agent) int {
+	uniqueStrategies := make(map[string]bool)
+	for _, agent := range population {
+		strategyKey := fmt.Sprintf("%v", agent.Strategy) // Serialize the strategy as a string
+		uniqueStrategies[strategyKey] = true
+	}
+	return len(uniqueStrategies)
 }
 
 // Perform crossover between two agents
