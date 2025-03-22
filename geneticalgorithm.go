@@ -8,7 +8,7 @@ import (
 	"sort"
 )
 
-func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mutationRate float64, fixedStrategy map[string]string, memoryLength int) {
+func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mutationRate float64, fixedStrategies []map[string]string, memoryLength int) {
 	// Initialize population
 	population := make([]Agent, populationSize)
 	for i := 0; i < populationSize; i++ {
@@ -35,7 +35,13 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 		// Evaluate fitness
 		totalFitness := 0
 		for i := range population {
-			population[i].Fitness = playIPD(population[i].Strategy, fixedStrategy, rounds)
+			population[i].Fitness = 0 // Reset fitness for this generation
+
+			// Evaluate fitness against each fixed strategy
+			for _, fixedStrategy := range fixedStrategies {
+				population[i].Fitness += playIPD(population[i].Strategy, fixedStrategy, rounds)
+			}
+
 			totalFitness += population[i].Fitness
 		}
 
