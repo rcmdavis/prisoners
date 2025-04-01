@@ -62,38 +62,3 @@ func generateTitForTat(memoryLength int) map[string]string {
 
 	return strategy
 }
-
-// Generate the Majority Rule strategy
-func generateMajorityRule(memoryLength int) map[string]string {
-	combinations := generateCombinations(memoryLength)
-	strategy := make(map[string]string)
-
-	for _, combo := range combinations {
-		if combo == "" {
-			// Default to cooperate for the first move
-			strategy[combo] = "C"
-		} else {
-			// Count occurrences of C and D in the opponent's history
-			countC := 0
-			countD := 0
-			for _, move := range combo {
-				if move == 'C' {
-					countC++
-				} else if move == 'D' {
-					countD++
-				}
-			}
-
-			// Decide based on the majority
-			if countC > countD {
-				strategy[combo] = "C" // Cooperate if C is the majority
-			} else if countD > countC {
-				strategy[combo] = "D" // Defect if D is the majority
-			} else {
-				strategy[combo] = "C" // Default to cooperate in case of a tie
-			}
-		}
-	}
-
-	return strategy
-}

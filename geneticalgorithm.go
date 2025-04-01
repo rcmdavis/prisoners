@@ -28,7 +28,7 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 	defer writer.Flush()
 
 	// Write the header row
-	writer.Write([]string{fmt.Sprintf("Total Fitness (Memory Length: %d)", memoryLength), "Diversity"})
+	writer.Write([]string{fmt.Sprintf("Average Fitness (Memory Length: %d)", memoryLength), "Diversity"})
 
 	// Evolve over generations
 	for gen := 0; gen < generations; gen++ {
@@ -45,11 +45,15 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 			totalFitness += population[i].Fitness
 		}
 
-		// Calculate diversity
-		diversity := calculateDiversity(population)
+		// Calculate average fitness
+		averageFitness := float64(totalFitness) / float64(populationSize*rounds)
 
-		// Write the total fitness and diversity for this generation to the CSV file
-		writer.Write([]string{fmt.Sprintf("%d", totalFitness), fmt.Sprintf("%d", diversity)})
+		// Calculate diversity and normalize it by dividing by the population size
+		rawDiversity := calculateDiversity(population)
+		normalizedDiversity := float64(rawDiversity) / float64(populationSize)
+
+		// Write the average fitness and diversity for this generation to the CSV file
+		writer.Write([]string{fmt.Sprintf("%.2f", averageFitness), fmt.Sprintf("%.2f", normalizedDiversity)})
 
 		// Sort population by fitness (descending)
 		sort.Slice(population, func(i, j int) bool {
@@ -80,7 +84,8 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 		population = newPopulation
 
 		// Log the best fitness, strategy, and diversity
-		logger.Debug("Generation completed", "generation", gen+1, "bestFitness", population[0].Fitness, "diversity", diversity, "memoryLength", population[0].MemoryLength)
+		logger.Info("Generation completed", "generation", gen+1, "bestFitness", population[0].Fitness, "memoryLength", population[0].MemoryLength,
+			"bestStrategy", population[0].Strategy)
 
 		// Reset fitness scores
 		for i := range population {

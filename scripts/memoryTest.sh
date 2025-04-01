@@ -5,14 +5,14 @@ set -e
 
 # Define the range of memory lengths
 START_MEMORY=1
-END_MEMORY=30
-STEP=5
+END_MEMORY=10
+STEP=1
 
 # Define other parameters
-OPPONENT="majorityRule"
+OPPONENT="allThree"
 
 # Create an output directory for the CSV files
-OUTPUT_DIR="results"
+OUTPUT_DIR="diversity"
 mkdir -p "$OUTPUT_DIR"
 
 # Loop through memory lengths in steps of 5 and run the program
@@ -26,7 +26,7 @@ for MEMORY_LENGTH in $(seq $START_MEMORY $STEP $END_MEMORY); do
         -memory="$MEMORY_LENGTH" \
         -opponent="$OPPONENT" \
         -csvFile="$CSV_FILE" \
-        -populationSize 10
+        -populationSize 100
 
     echo "Results saved to $CSV_FILE"
 done

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 )
 
 var logger *slog.Logger
@@ -49,15 +50,13 @@ func main() {
 	alwaysCooperate := generateStrategy(*memoryLength, "C")
 	alwaysDefect := generateStrategy(*memoryLength, "D")
 	titForTat := generateTitForTat(*memoryLength)
-	majorityRule := generateMajorityRule(*memoryLength)
 
 	// Define the fixed strategies
 	strategies := map[string]interface{}{
 		"alwaysCooperate": []map[string]string{alwaysCooperate},
 		"alwaysDefect":    []map[string]string{alwaysDefect},
 		"titForTat":       []map[string]string{titForTat},
-		"majorityRule":    []map[string]string{majorityRule},
-		"allFour":         []map[string]string{alwaysCooperate, alwaysDefect, titForTat, majorityRule},
+		"allThree":        []map[string]string{alwaysCooperate, alwaysDefect, titForTat},
 	}
 
 	// Get the selected strategy or list of strategies
@@ -68,6 +67,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	startTime := time.Now()
 	// Run the genetic algorithm
 	geneticAlgorithm(*populationSize, *generations, *rounds, *crossoverRate, *mutationRate, fixedStrategies.([]map[string]string), *memoryLength, *csvFile)
+	// Calculate and log the total time taken
+	elapsedTime := time.Since(startTime)
+	logger.Info("Genetic algorithm completed", "timeTaken", elapsedTime)
+	fmt.Printf("Time taken for this run: %s\n", elapsedTime)
 }
