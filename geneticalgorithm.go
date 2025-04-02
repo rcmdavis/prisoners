@@ -8,7 +8,7 @@ import (
 	"sort"
 )
 
-func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mutationRate float64, fixedStrategies []map[string]string, memoryLength int, csvFileName string) {
+func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mutationRate, elitismRate float64, fixedStrategies []map[string]string, memoryLength int, csvFileName string) {
 	// Initialize population
 	population := make([]Agent, populationSize)
 	for i := 0; i < populationSize; i++ {
@@ -64,7 +64,7 @@ func geneticAlgorithm(populationSize, generations, rounds int, crossoverRate, mu
 		newPopulation := []Agent{}
 
 		// Elitism: Retain top Y% of agents
-		elitismCount := int(float64(populationSize) * (1 - crossoverRate))
+		elitismCount := int(float64(populationSize) * (1 - elitismRate))
 		newPopulation = append(newPopulation, population[:elitismCount]...)
 
 		// Crossover: Generate new agents from top X% of agents

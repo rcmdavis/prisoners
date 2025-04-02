@@ -17,6 +17,7 @@ func main() {
 	generations := flag.Int("generations", 50, "Number of generations")
 	rounds := flag.Int("rounds", 100, "Number of rounds per game")
 	crossoverRate := flag.Float64("crossoverRate", 0.8, "Crossover rate (0.0 to 1.0)")
+	elitismRate := flag.Float64("elitismRate", 0.8, "Elitism rate (0.0 to 1.0)")
 	mutationRate := flag.Float64("mutationRate", 0.01, "Mutation rate (0.0 to 1.0)")
 	opponentFlag := flag.String("opponent", "alwaysDefect", "Fixed opponent strategy: alwaysCooperate, alwaysDefect, titForTat, majorityRule, or allFour")
 	csvFile := flag.String("csvFile", "fitness_per_generation.csv", "Name of the CSV file to store fitness data")
@@ -69,7 +70,7 @@ func main() {
 
 	startTime := time.Now()
 	// Run the genetic algorithm
-	geneticAlgorithm(*populationSize, *generations, *rounds, *crossoverRate, *mutationRate, fixedStrategies.([]map[string]string), *memoryLength, *csvFile)
+	geneticAlgorithm(*populationSize, *generations, *rounds, *crossoverRate, *mutationRate, *elitismRate, fixedStrategies.([]map[string]string), *memoryLength, *csvFile)
 	// Calculate and log the total time taken
 	elapsedTime := time.Since(startTime)
 	logger.Info("Genetic algorithm completed", "timeTaken", elapsedTime)
