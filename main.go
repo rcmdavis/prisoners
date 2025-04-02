@@ -63,7 +63,7 @@ func main() {
 	fixedStrategies, exists := strategies[*opponentFlag]
 	if !exists {
 		logger.Error("Invalid opponent strategy", "opponent", *opponentFlag)
-		fmt.Println("Valid options are: alwaysCooperate, alwaysDefect, titForTat, majorityRule, allFour")
+		fmt.Println("Valid options are: alwaysCooperate, alwaysDefect, titForTat, allThree")
 		os.Exit(1)
 	}
 
